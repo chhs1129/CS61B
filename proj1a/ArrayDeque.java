@@ -59,7 +59,7 @@ public class ArrayDeque<Type> {
      * get the size of LinkedList deque
      */
     public int size() {
-        return arr.length;
+        return position;
     }
 
     /***
