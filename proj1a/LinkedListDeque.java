@@ -140,7 +140,7 @@ public class LinkedListDeque<Type> {
     /***
      * get method - recursive
      * @param index
-     * @return the item
+     * @return the itemx
      */
     public Type getRecursive(int index) {
         if (index < size)
