@@ -1,5 +1,5 @@
 public class LinkedListDeque<Type> {
-    public class Node{
+    public class Node {
         private Type item;
         private Node next;
         private Node prev;
@@ -30,7 +30,7 @@ public class LinkedListDeque<Type> {
      */
     public LinkedListDeque(LinkedListDeque other) {
         Node temp = other.dummyNode;
-        while(temp.next != other.dummyNode) {
+        while (temp.next != other.dummyNode) {
             temp = temp.next;
             addLast(temp.item);
             size += 1;
@@ -42,7 +42,7 @@ public class LinkedListDeque<Type> {
      * @param item
      */
     public void addFirst(Type item) {
-        Node newNode = new Node(item,dummyNode,dummyNode.next);
+        Node newNode = new Node(item, dummyNode, dummyNode.next);
         dummyNode.next.prev = newNode;
         dummyNode.next = newNode;
         size += 1;
@@ -53,7 +53,7 @@ public class LinkedListDeque<Type> {
      * @param item
      */
     public void addLast(Type item) {
-        Node newNode = new Node(item,dummyNode.prev,dummyNode);
+        Node newNode = new Node(item, dummyNode.prev, dummyNode);
         dummyNode.prev.next = newNode;
         dummyNode.prev = newNode;
         size += 1;
@@ -78,10 +78,10 @@ public class LinkedListDeque<Type> {
      * print the LinkedList deque
      */
     public void printDeque() {
-        if(size > 0) {
+        if (size > 0) {
             Node temp = dummyNode.next;
             int tempSize = size;
-            while(tempSize > 0) {
+            while (tempSize > 0) {
                 System.out.print(temp.item);
                 System.out.print(" ");
                 temp = temp.next;
@@ -96,7 +96,7 @@ public class LinkedListDeque<Type> {
      * @return
      */
     public Type removeFirst() {
-        if(size == 0) {
+        if (size == 0) {
             return null;
         }
         Node temp = dummyNode.next;
@@ -111,7 +111,7 @@ public class LinkedListDeque<Type> {
      * @return
      */
     public Type removeLast() {
-        if(size == 0) {
+        if (size == 0) {
             return null;
         }
         Node temp = dummyNode.prev;
@@ -127,10 +127,10 @@ public class LinkedListDeque<Type> {
      * @return the item
      */
     public Type get(int index) {
-        if(index > size)
+        if (index > size)
             return null;
         Node temp = dummyNode.next;
-        while(index != 0) {
+        while (index != 0) {
             temp = temp.next;
             index--;
         }
@@ -143,15 +143,15 @@ public class LinkedListDeque<Type> {
      * @return the item
      */
     public Type getRecursive(int index) {
-        if(index < size)
-            return getRecursiveHelper(index,dummyNode.next);
+        if (index < size)
+            return getRecursiveHelper(index, dummyNode.next);
         else
             return null;
     }
 
     private Type getRecursiveHelper(int index, Node curr) {
-        if(index==0)
+        if (index==0)
             return curr.item;
-        return getRecursiveHelper(index--,curr.next);
+        return getRecursiveHelper(index--, curr.next);
     }
 }
