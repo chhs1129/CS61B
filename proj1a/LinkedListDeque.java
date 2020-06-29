@@ -152,6 +152,6 @@ public class LinkedListDeque<Type> {
     private Type getRecursiveHelper(int index, Node curr) {
         if (index==0)
             return curr.item;
-        return getRecursiveHelper(index--, curr.next);
+        return getRecursiveHelper(index - 1, curr.next);
     }
 }

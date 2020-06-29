@@ -28,6 +28,7 @@ public class ArrayDeque<Type> {
         Type[] temp = (Type[]) new Object[arr.length * 2];
         temp[0] = item;
         System.arraycopy(arr, 0, temp, 1, position);
+        arr = temp;
         position += 1;
     }
 
@@ -65,7 +66,7 @@ public class ArrayDeque<Type> {
      * print the LinkedList deque
      */
     public void printDeque() {
-        for(int i = 0; i < arr.length; i++) {
+        for(int i = 0; i < position; i++) {
             System.out.print(arr[i]);
             System.out.print(" ");
         }
@@ -97,6 +98,7 @@ public class ArrayDeque<Type> {
         if((double)position / arr.length < 0.25) {
             Type[] temp = (Type[]) new Object[ (arr.length / 2) + 1];
             System.arraycopy(arr, 0, temp, 0, position);
+            arr = temp;
         }
         return tempVal;
     }
@@ -109,6 +111,5 @@ public class ArrayDeque<Type> {
     public Type get(int index) {
         return arr[index];
     }
-
 
 }
