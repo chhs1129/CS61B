@@ -25,7 +25,7 @@ public class ArrayDeque<Type> {
      * @param item
      */
     public void addFirst(Type item) {
-        Type[] temp = (Type[]) new Object[arr.length * 2];
+        Type[] temp = (Type[]) new Object[arr.length + 1];
         temp[0] = item;
         System.arraycopy(arr, 0, temp, 1, position);
         arr = temp;
@@ -78,6 +78,8 @@ public class ArrayDeque<Type> {
      * @return
      */
     public Type removeFirst() {
+        if (position == 0)
+            return null;
         Type tempItem = arr[0];
         Type[] temp = (Type[]) new Object[arr.length - 1];
         System.arraycopy(arr, 1, temp, 0, position);
@@ -91,12 +93,14 @@ public class ArrayDeque<Type> {
      * @return
      */
     public Type removeLast() {
+        if(position == 0)
+            return null;
         Type tempVal = arr[position-1];
         arr[position-1] = null;
         position -= 1;
         //check usage factor
         if((double)position / arr.length < 0.25) {
-            Type[] temp = (Type[]) new Object[ (arr.length / 2) + 1];
+            Type[] temp = (Type[]) new Object[position];
             System.arraycopy(arr, 0, temp, 0, position);
             arr = temp;
         }
@@ -109,7 +113,9 @@ public class ArrayDeque<Type> {
      * @return the item
      */
     public Type get(int index) {
-        return arr[index];
+        if(index >= 0 && index < position)
+            return arr[index];
+        return null;
     }
 
 }
