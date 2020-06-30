@@ -70,7 +70,7 @@ public class ArrayDeque<Type> {
 
     //downsize to size of 8
     private void downSize() {
-        int newSize = 8;
+        int newSize = (items.length / 2);
         int newNextLast = size;
         int newNextFirst = newSize - 1;
         Type[] newItems = (Type[]) new Object[newSize];
@@ -133,6 +133,7 @@ public class ArrayDeque<Type> {
     public void addLast(Type item) {
         if (isLastOne()) {
             items[nextLast] = item;
+            moveNextFirstRight();
             size += 1;
             increaseSize();
         } else {
