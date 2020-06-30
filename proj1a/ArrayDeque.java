@@ -1,121 +1,187 @@
-public class ArrayDeque<Type> {
-    Type[] arr;
-    int position;
+public class ArrayDeque<T> {
 
-    /***
-     * Constructor
+    private T[] items;
+    private int nextFirst;
+    private int nextLast;
+    private int size;
+
+    /**
+     * Create an empty ArrayDeque.
      */
     public ArrayDeque() {
-        arr = (Type[]) new Object[8];
+        // Java does not allow to create new generic array directly. So need cast.
+        items = (T[]) new Object[8];
+        nextFirst = 0;
+        nextLast = 1;
+        size = 0;
     }
 
-    /***
-     * Deep copy from another Array Deque
-     * @param other
+    /**
+     * Return true if deque is full, false otherwise.
      */
-    public ArrayDeque(ArrayDeque other) {
-        Type[] temp = (Type[]) new Object[other.arr.length];
-        System.arraycopy(arr, 0, temp, 0, other.size());
-        position = other.size();
+    private boolean isFull() {
+        return size == items.length;
     }
 
-
-    /***
-     * Add an item to the front of the LinkedList deque
-     * @param item
+    /**
+     * Whether to downsize the deque.
      */
-    public void addFirst(Type item) {
-        Type[] temp = (Type[]) new Object[arr.length + 1];
-        temp[0] = item;
-        System.arraycopy(arr, 0, temp, 1, position);
-        arr = temp;
-        position += 1;
+    private boolean isSparse() {
+        return items.length >= 16 && size < (items.length / 4);
     }
 
-    /***
-     * Add an item to the end of the LinkedList deque
-     * @param item
+    /**
+     * Add one circularly.
      */
-    public void addLast(Type item) {
-        if (position >= arr.length) {
-            Type[] temp = (Type[]) new Object[arr.length * 2];
-            System.arraycopy(arr, 0, temp, 0,position);
-            arr = temp;
+    private int plusOne(int index) {
+        return (index + 1) % items.length;
+    }
+
+    /**
+     * Minus one circularly.
+     */
+    private int minusOne(int index) {
+        // unlike Python, in Java, the % symbol represents "remainder" rather than "modulus",
+        // therefore, it may give negative value, so + items.length is necessary,
+        // or to use Math.floorMod(x, y)
+        return (index - 1 + items.length) % items.length;
+    }
+
+    /**
+     * Resize the deque.
+     */
+    private void resize(int capacity) {
+        T[] newDeque = (T[]) new Object[capacity];
+        int oldIndex = plusOne(nextFirst); // the index of the first item in original deque
+        for (int newIndex = 0; newIndex < size; newIndex++) {
+            newDeque[newIndex] = items[oldIndex];
+            oldIndex = plusOne(oldIndex);
         }
+        items = newDeque;
+        nextFirst = capacity - 1; // since the new deque is starting from true 0 index.
+        nextLast = size;
 
-        arr[position] = item;
-        position += 1;
     }
 
-    /***
-     * check if the LinkedList deque is empty
-     * @return True if empty, False otherwise
+    /**
+     * Upsize the deque.
+     */
+    private void upSize() {
+        resize(size * 2);
+    }
+
+    /**
+     * Downsize the deque
+     */
+    private void downSize() {
+        resize(items.length / 2);
+    }
+
+    /**
+     * Return true if deque is empty, false otherwise.
      */
     public boolean isEmpty() {
-        return arr.length == 0;
+        return size == 0;
     }
 
-    /***
-     * get the size of LinkedList deque
+    /**
+     * Return the number of items in the deque.
      */
     public int size() {
-        return position;
+        return size;
     }
 
-    /***
-     * print the LinkedList deque
+    /**
+     * Print the items in the deque from first to last, separated by a space.
+     * Once all the items have been printed, print out a new line.
      */
     public void printDeque() {
-        for(int i = 0; i < position; i++) {
-            System.out.print(arr[i]);
-            System.out.print(" ");
+        for (int i = plusOne(nextFirst); i != nextLast; i = plusOne(i)) {
+            System.out.print(items[i] + " ");
         }
         System.out.println();
     }
 
-    /***
-     * remove the front item of LinkedList deque
-     * @return
+    /**
+     * Add an item of type Item to the front of the deque.
      */
-    public Type removeFirst() {
-        if (position == 0)
-            return null;
-        Type tempItem = arr[0];
-        Type[] temp = (Type[]) new Object[arr.length - 1];
-        System.arraycopy(arr, 1, temp, 0, position);
-        position -= 1;
-        arr = temp;
-        return tempItem;
-    }
-
-    /***
-     * remove the end item of the LinkedList deque
-     * @return
-     */
-    public Type removeLast() {
-        if(position == 0)
-            return null;
-        Type tempVal = arr[position-1];
-        arr[position-1] = null;
-        position -= 1;
-        //check usage factor
-        if((double)position / arr.length < 0.25) {
-            Type[] temp = (Type[]) new Object[position];
-            System.arraycopy(arr, 0, temp, 0, position);
-            arr = temp;
+    public void addFirst(T x) {
+        if (isFull()) {
+            upSize();
         }
-        return tempVal;
+        items[nextFirst] = x;
+        nextFirst = minusOne(nextFirst);
+        size += 1;
     }
 
-    /***
-     * get the item at index - iterative
-     * @param index
-     * @return the item
+    /**
+     * Add an item of type Item to the back of deque.
      */
-    public Type get(int index) {
-        if(index >= 0 && index < position)
-            return arr[index];
-        return null;
+    public void addLast(T x) {
+        if (isFull()) {
+            upSize();
+        }
+        items[nextLast] = x;
+        nextLast = plusOne(nextLast);
+        size += 1;
     }
 
+    /**
+     * Remove and return the item at the front of the deque.
+     * If no such item exist, return null.
+     */
+    public T removeFirst() {
+        if (isSparse()) {
+            downSize();
+        }
+        nextFirst = plusOne(nextFirst);
+        T toRemove = items[nextFirst];
+        items[nextFirst] = null;
+        if (!isEmpty()) {
+            size -= 1;
+        }
+        return toRemove;
+    }
+
+    /**
+     * Remove and return the item at the back oc the deque.
+     * If no such item exist, return null.
+     */
+    public T removeLast() {
+        if (isSparse()) {
+            downSize();
+        }
+        nextLast = minusOne(nextLast);
+        T toRemove = items[nextLast];
+        items[nextLast] = null;
+        if (!isEmpty()) {
+            size -= 1;
+        }
+        return toRemove;
+    }
+
+    /**
+     * Get the item at the given index, where 0 is the front,
+     * 1 is the next item, and so forth. If no such item exists,
+     * returns null. Must not alter the deque.
+     */
+    public T get(int index) {
+        if (index >= size) {
+            return null;
+        }
+        int start = plusOne(nextFirst);
+        return items[(start + index) % items.length];
+    }
+
+    /**
+     * Create a deep copy of other.
+     */
+    public ArrayDeque(ArrayDeque other) {
+        items = (T[]) new Object[other.size];
+        nextFirst = other.nextFirst;
+        nextLast = other.nextLast;
+        size = other.size;
+
+        System.arraycopy(other.items, 0, items, 0, other.size);
+    }
 }
