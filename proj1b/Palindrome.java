@@ -23,7 +23,7 @@ public class Palindrome {
         while (!ad.isEmpty()) {
             if(ad.size() == 1)
                 break;
-            if( cc.equalChars(ad.removeFirst(), ad.removeLast()))
+            if( !cc.equalChars(ad.removeFirst(), ad.removeLast()))
                 return false;
         }
         return true;
