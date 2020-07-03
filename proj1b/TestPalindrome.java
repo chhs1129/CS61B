@@ -32,6 +32,6 @@ public class TestPalindrome {
 
     @Test
     public void testIsPalindromeOffByOne() {
-        assertTrue(palindrome.isPalindrome("aba",obo));
+        assertFalse(palindrome.isPalindrome("aba",obo));
     }
 }
